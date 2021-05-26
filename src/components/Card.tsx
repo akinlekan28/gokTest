@@ -15,15 +15,17 @@ interface Props {
       picture_big: String;
       name: String;
     };
+    title: String;
     title_short: String;
     position: Number;
     explicit_lyrics: boolean;
     preview: URL;
     link: URL;
   };
+  fetchType: boolean;
 }
 
-const Card: React.FC<Props> = ({data}) => {
+const Card: React.FC<Props> = ({data, fetchType}) => {
   const openUrl = async (url: any) => {
     const supported = await Linking.canOpenURL(url);
     if (supported) {
@@ -58,16 +60,18 @@ const Card: React.FC<Props> = ({data}) => {
           padding: 11,
         }}>
         <Text numberOfLines={1}>
-          {data.artist.name} - {data.title_short}
+          {data.artist.name} - {fetchType ? data.title_short : data.title}
         </Text>
         <Text style={styles.marginTop}>Rank: {data.position}</Text>
         <Text style={styles.marginTop}>
           Explicit lyrics: {data.explicit_lyrics ? 'Yes' : 'No'}
         </Text>
         <View style={styles.actionRow}>
-          <TouchableOpacity onPress={() => openUrl(data.preview)}>
-            <Text style={styles.textWrapper}>Preview</Text>
-          </TouchableOpacity>
+          {fetchType && (
+            <TouchableOpacity onPress={() => openUrl(data.preview)}>
+              <Text style={styles.textWrapper}>Preview</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={() => openUrl(data.link)}>
             <Text style={styles.textWrapper}>Play</Text>
           </TouchableOpacity>

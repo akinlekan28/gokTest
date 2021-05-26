@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ const Home: React.FC<{}> = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(s => s.chart);
+  const [fetchType, setFetchType] = useState(true);
 
   const {loading, chart} = state;
 
@@ -35,10 +36,12 @@ const Home: React.FC<{}> = () => {
         <FlatList
           data={chart}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item, index}) => <Card data={item} />}
+          renderItem={({item, index}) => (
+            <Card data={item} fetchType={fetchType} />
+          )}
           showsVerticalScrollIndicator={false}
           refreshing={loading}
-          onRefresh={() => dispatch(getChartData())}
+          onRefresh={() => dispatch(getChartData(fetchType))}
         />
       );
     } else {
@@ -58,8 +61,8 @@ const Home: React.FC<{}> = () => {
   }
 
   React.useEffect(() => {
-    dispatch(getChartData());
-  }, []);
+    dispatch(getChartData(fetchType));
+  }, [fetchType]);
 
   return (
     <View style={{flex: 1, paddingHorizontal: 5}}>
@@ -71,8 +74,15 @@ const Home: React.FC<{}> = () => {
       </TouchableOpacity>
       <View style={{alignSelf: 'center', marginTop: 20}}>
         <Text style={{fontSize: 20, marginBottom: 8}}>
-          Top 10 charting songs in Nigeria
+          Latest music chart ({fetchType ? 'tracks' : 'albums'})
         </Text>
+        <View style={{alignSelf: 'center', marginBottom: 10}}>
+          <TouchableOpacity onPress={() => setFetchType(!fetchType)}>
+            <Text style={styles.textWrapper}>
+              Switch to {fetchType ? 'albums' : 'tracks'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {container}
       <View style={styles.marginBottom} />

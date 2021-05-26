@@ -3,10 +3,10 @@ import axios from 'axios';
 import {Platform} from 'react-native';
 import {Notifier, NotifierComponents} from 'react-native-notifier';
 
-export const getChartData = () => dispatch => {
+export const getChartData = fetchType => dispatch => {
   dispatch(loading());
   axios
-    .get('https://api.deezer.com/chart/0/tracks')
+    .get(`https://api.deezer.com/chart/0/${fetchType ? 'tracks' : 'albums'}`)
     .then(res => dispatch({type: GET_CHARTS, payload: res.data.data}))
     .catch(err => {
       dispatch(removeLoading());
